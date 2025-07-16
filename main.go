@@ -55,7 +55,8 @@ func switchTheme(theme, configDir string) error {
 
 		sourceFile, err := os.Open(sourcePath)
 		if err != nil {
-			return err
+			fmt.Printf("Warning: source file %s not found, skipping...\n", sourcePath)
+			continue
 		}
 		defer sourceFile.Close()
 
