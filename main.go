@@ -84,6 +84,10 @@ func switchTheme(theme, configDir string) error {
 		exec.Command("gsettings", "set", "org.gnome.desktop.interface", "gtk-theme", gtkThemes[theme]),
 		exec.Command("gsettings", "set", "org.gnome.desktop.interface", "icon-theme", iconThemes[theme]),
 		exec.Command("kvantummanager", "--set", qtThemes[theme]),
+		exec.Command("systemctl", "--user", "reload", "waybar"),
+		exec.Command("systemctl", "--user", "restart", "dunst"),
+		exec.Command("hyprctl", "reload"),
+		exec.Command("kitty", "@", "set-colors", "-a", "-c", configurationMap["kitty-theme.conf"]),
 	}
 
 	for _, cmd := range commands {
