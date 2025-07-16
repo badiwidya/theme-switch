@@ -76,47 +76,21 @@ func switchTheme(theme, configDir string) error {
 		fmt.Printf("Changing %s...\n", targetPath)
 	}
 
-	if theme == "dark" {
-		cmd := exec.Command("gsettings", "set", "org.gnome.desktop.interface", "gtk-theme", "adw-gtk3-dark")
-		if err := cmd.Run(); err != nil {
-			return err
-		} else {
-			fmt.Printf("GTK theme changed to dark.\n")
-		}
+	gtkThemes := map[string]string{"light": "adw-gtk3", "dark": "adw-gtk3-dark"}
+	iconThemes := map[string]string{"light": "Papirus-Light", "dark": "Papirus-Light"}
+	qtThemes := map[string]string{"light": "KvLibadwaita", "dark": "KvLibadwaitaDark"}
 
-		cmd = exec.Command("gsettings", "set", "org.gnome.desktop.interface", "icon-theme", "Papirus-Dark")
-		if err := cmd.Run(); err != nil {
-			return err
-		} else {
-			fmt.Printf("Icon theme changed to dark.\n")
-		}
+	commands := []*exec.Cmd{
+		exec.Command("gsettings", "set", "org.gnome.desktop.interface", "gtk-theme", gtkThemes[theme]),
+		exec.Command("gsettings", "set", "org.gnome.desktop.interface", "icon-theme", iconThemes[theme]),
+		exec.Command("kvantummanager", "--set", qtThemes[theme]),
+	}
 
-		cmd = exec.Command("kvantummanager", "--set", "KvLibadwaitaDark")
+	for _, cmd := range commands {
 		if err := cmd.Run(); err != nil {
-			return err
+			fmt.Printf("Warning: failed to run '%s'.\n%v\n", cmd.String(), err)
 		} else {
-			fmt.Printf("QT theme changed to dark.\n")
-		}
-	} else {
-		cmd := exec.Command("gsettings", "set", "org.gnome.desktop.interface", "gtk-theme", "adw-gtk3")
-		if err := cmd.Run(); err != nil {
-			return err
-		} else {
-			fmt.Printf("GTK theme changed to light.\n")
-		}
-
-		cmd = exec.Command("gsettings", "set", "org.gnome.desktop.interface", "icon-theme", "Papirus-Light")
-		if err := cmd.Run(); err != nil {
-			return err
-		} else {
-			fmt.Printf("Icon theme changed to light.\n")
-		}
-
-		cmd = exec.Command("kvantummanager", "--set", "KvLibadwaita")
-		if err := cmd.Run(); err != nil {
-			return err
-		} else {
-			fmt.Printf("QT theme changed to light.\n")
+			fmt.Printf("Command '%s' executed successfully\n", cmd.String())
 		}
 	}
 
