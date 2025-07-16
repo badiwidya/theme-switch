@@ -23,7 +23,15 @@ func main() {
 
 	switch themeSelected {
 	case "light":
+		if err := switchTheme("light", configDir); err != nil {
+			fmt.Printf("Error: failed to change theme.\n%v\n", err)
+			os.Exit(1)
+		}
 	case "dark":
+		if err := switchTheme("dark", configDir); err != nil {
+			fmt.Printf("Error: failed to change theme.\n%v\n", err)
+			os.Exit(1)
+		}
 	default:
 		fmt.Printf("USAGE: theme-switch light|dark.")
 		os.Exit(1)
