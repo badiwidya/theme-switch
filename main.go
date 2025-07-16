@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"io"
 	"os"
 	"path/filepath"
 )
@@ -36,6 +37,33 @@ func switchTheme(theme, configDir string) error {
 		"tofi-colors":          filepath.Join(configDir, "tofi", "colors"),
 		"hyprland-colors.conf": filepath.Join(configDir, "hypr", "colors.conf"),
 		"dunstrc":              filepath.Join(configDir, "dunst", "dunstrc"),
+	}
+
+	themeDir := filepath.Join(configDir, "themes", theme)
+
+	for source, targetPath := range configurationMap {
+		sourcePath := filepath.Join(themeDir, source)
+
+		sourceFile, err := os.Open(sourcePath)
+		if err != nil {
+			return err
+		}
+		defer sourceFile.Close()
+
+		targetFile, err := os.Create(targetPath)
+		if err != nil {
+			return err
+		}
+		defer targetFile.Close()
+
+		_, err = io.Copy(targetFile, sourceFile)
+		if err != nil {
+			return err
+		}
+
+		targetFile.Sync()
+
+		fmt.Printf("Changing %s...\n", targetPath)
 	}
 
 	return nil
