@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"os/exec"
 	"path/filepath"
 )
 
@@ -72,6 +73,50 @@ func switchTheme(theme, configDir string) error {
 		targetFile.Sync()
 
 		fmt.Printf("Changing %s...\n", targetPath)
+	}
+
+	if theme == "dark" {
+		cmd := exec.Command("gsettings", "set", "org.gnome.desktop.interface", "gtk-theme", "adw-gtk3-dark")
+		if err := cmd.Run(); err != nil {
+			return err
+		} else {
+			fmt.Printf("GTK theme changed to dark.\n")
+		}
+
+		cmd = exec.Command("gsettings", "set", "org.gnome.desktop.interface", "icon-theme", "Papirus-Dark")
+		if err := cmd.Run(); err != nil {
+			return err
+		} else {
+			fmt.Printf("Icon theme changed to dark.\n")
+		}
+
+		cmd = exec.Command("kvantummanager", "--set", "KvLibadwaitaDark")
+		if err := cmd.Run(); err != nil {
+			return err
+		} else {
+			fmt.Printf("QT theme changed to dark.\n")
+		}
+	} else {
+		cmd := exec.Command("gsettings", "set", "org.gnome.desktop.interface", "gtk-theme", "adw-gtk3")
+		if err := cmd.Run(); err != nil {
+			return err
+		} else {
+			fmt.Printf("GTK theme changed to light.\n")
+		}
+
+		cmd = exec.Command("gsettings", "set", "org.gnome.desktop.interface", "icon-theme", "Papirus-Light")
+		if err := cmd.Run(); err != nil {
+			return err
+		} else {
+			fmt.Printf("Icon theme changed to light.\n")
+		}
+
+		cmd = exec.Command("kvantummanager", "--set", "KvLibadwaita")
+		if err := cmd.Run(); err != nil {
+			return err
+		} else {
+			fmt.Printf("QT theme changed to light.\n")
+		}
 	}
 
 	return nil
